@@ -10,17 +10,17 @@
 <link rel="apple-touch-icon" href="icons/apple-touch-icon.png">
 <link rel="icon" href="icons/icon-192.png">
 <style>
-:root{--bg:#f6f7f9;--card:#fff;--tx:#14181f;--mut:#6b7280;--bd:#e3e6ec;--ac:#1f6feb;--g:#0e9f6e;--r:#e02f44;--in:#f1f3f7;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
-@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--bg:#0e1116;--card:#171b22;--tx:#e8ebf0;--mut:#8b94a3;--bd:#262c36;--ac:#4c8dff;--g:#2dd4a0;--r:#ff5c70;--in:#1f242d;color-scheme:dark}}
-:root[data-theme="dark"]{--bg:#0e1116;--card:#171b22;--tx:#e8ebf0;--mut:#8b94a3;--bd:#262c36;--ac:#4c8dff;--g:#2dd4a0;--r:#ff5c70;--in:#1f242d;color-scheme:dark}
+:root{--bg:#f6f7f9;--card:#fff;--tx:#14181f;--mut:#6b7280;--bd:#e3e6ec;--ac:#1f6feb;--g:#0e9f6e;--r:#e02f44;--in:#f1f3f7;--w:#b45309;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--bg:#0e1116;--card:#171b22;--tx:#e8ebf0;--mut:#8b94a3;--bd:#262c36;--ac:#4c8dff;--g:#2dd4a0;--r:#ff5c70;--in:#1f242d;--w:#fbbf24;color-scheme:dark}}
+:root[data-theme="dark"]{--bg:#0e1116;--card:#171b22;--tx:#e8ebf0;--mut:#8b94a3;--bd:#262c36;--ac:#4c8dff;--g:#2dd4a0;--r:#ff5c70;--in:#1f242d;--w:#fbbf24;color-scheme:dark}
 html{scroll-padding-top:env(safe-area-inset-top,0px)}
 *{box-sizing:border-box}
 body{margin:0;background:var(--bg);color:var(--tx);font:15px/1.4 system-ui,-apple-system,"Segoe UI",Roboto,sans-serif}
 .w{max-width:1100px;margin:0 auto;padding:16px}
 h1{font-size:22px;margin:0 0 14px}h2{font-size:16px;margin:0 0 12px}
 .stats{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:10px;margin-bottom:14px}
-.card{background:var(--card);border:1px solid var(--bd);border-radius:12px;padding:14px}
-.st small{color:var(--mut);display:block;font-size:12px}.st b{font-size:20px}
+.card{background:var(--card);border:1px solid var(--bd);border-radius:12px;padding:14px;margin-bottom:14px}
+.st{margin:0}.st small{color:var(--mut);display:block;font-size:12px}.st b{font-size:20px}
 .g{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:10px}
 label{font-size:12px;color:var(--mut);display:block;margin-bottom:3px}
 input,select,textarea{width:100%;padding:9px;border:1px solid var(--bd);border-radius:8px;background:var(--in);color:var(--tx);font:inherit}
@@ -29,12 +29,13 @@ textarea{resize:vertical;min-height:60px}
 .res small{color:var(--mut);display:block;font-size:12px}.res b{font-size:18px}
 button{padding:10px 16px;border:0;border-radius:8px;background:var(--ac);color:#fff;font:inherit;font-weight:600;cursor:pointer}
 button.s{background:var(--in);color:var(--tx);border:1px solid var(--bd);padding:5px 9px;font-size:13px}
-.tw{overflow-x:auto}table{border-collapse:collapse;width:100%;min-width:900px;font-size:13px}
+.tw{overflow-x:auto}table{border-collapse:collapse;width:100%;min-width:1100px;font-size:13px}
 th,td{padding:8px;border-bottom:1px solid var(--bd);text-align:left;white-space:nowrap;vertical-align:top}th{color:var(--mut);font-weight:600}
 td.l{white-space:normal;min-width:160px}
-.p{color:var(--g)}.n{color:var(--r)}.m{color:var(--mut)}
+td input{width:100px;padding:5px;margin-bottom:4px;display:block}
+.p{color:var(--g)}.n{color:var(--r)}.m{color:var(--mut)}.wn{color:var(--w);font-size:13px}
 .row{display:flex;gap:10px;align-items:center;flex-wrap:wrap}
-td input{width:90px;padding:5px}
+summary{cursor:pointer;font-weight:600}
 </style></head><body><div class="w">
 <h1>📒 Trading Journal</h1>
 <div class="stats">
@@ -50,13 +51,15 @@ td input{width:90px;padding:5px}
 <div><label>Date</label><input id="date" type="date"></div>
 <div><label>Pair</label><select id="pair"><option>XAUUSD</option><option>EURUSD</option></select></div>
 <div><label>Direction</label><select id="dir"><option value="1">Buy</option><option value="-1">Sell</option></select></div>
-<div><label>Current balance ($)</label><input id="bal" type="number" readonly></div>
-<div><label>Risk %</label><input id="risk" type="number" step="0.1" value="1"></div>
+<div><label>Balance for sizing ($)</label><div class="row" style="flex-wrap:nowrap"><input id="bal" type="number" step="any"><button class="s" id="balauto" title="Use journal balance">↺</button></div></div>
+<div><label>Risk %</label><input id="risk" type="number" step="any" value="1" list="rl"><datalist id="rl"><option>0.25</option><option>0.5</option><option>1</option><option>2</option><option>3</option></datalist></div>
 <div><label>Entry price</label><input id="entry" type="number" step="any"></div>
 <div><label>SL pips (auto)</label><input id="slp" type="number" step="any"></div>
-<div><label>Risk : Reward (1 : x)</label><input id="rr" type="number" step="0.1" value="2"></div>
+<div><label>Risk : Reward (1 : x)</label><input id="rr" type="number" step="any" value="2"></div>
 <div><label>SL price</label><input id="sl" type="number" step="any"></div>
 <div><label>TP price</label><input id="tpp" type="number" step="any"></div>
+<div><label>Custom lot (optional)</label><input id="clot" type="number" step="any" placeholder="overrides auto lot"></div>
+<div><label>Fees / commission ($)</label><input id="fees" type="number" step="any" value="0"></div>
 <div><label>News day?</label><select id="news"><option>No</option><option>Yes</option></select></div>
 <div><label>News time (local)</label><input id="nt" type="time"></div>
 <div><label>Impact</label><select id="imp"><option>None</option><option>Low</option><option>Medium</option><option>High</option></select></div>
@@ -64,139 +67,191 @@ td input{width:90px;padding:5px}
 </div>
 <div style="margin-top:10px"><label>Trade logic</label><textarea id="logic" placeholder="Why are you taking this trade?"></textarea></div>
 <div class="res">
-<div><small>Lot size</small><b id="lot">–</b></div>
-<div><small>Risk ($)</small><b id="rsk">–</b></div>
+<div><small>Lot to trade</small><b id="lot">–</b></div>
+<div><small>Exact lot (unrounded)</small><b id="ex">–</b></div>
+<div><small>Target risk</small><b id="rsk">–</b></div>
+<div><small>Actual risk</small><b id="act">–</b></div>
 <div><small>SL pips</small><b id="o1">–</b></div>
 <div><small>TP pips</small><b id="o2">–</b></div>
 <div><small>Reward ($)</small><b id="o3">–</b></div>
 <div><small>R:R</small><b id="o4">–</b></div>
 </div>
-<div class="row"><button id="add">Save trade</button><span class="m" id="msg"></span></div>
-<p class="m" style="font-size:12px;margin:10px 0 0">Assumes a USD account, standard lot = 100,000 units (EURUSD) / 100 oz (gold). Pip = 0.0001 for EURUSD and 0.10 for gold, so both are worth $10 per pip per lot. Brokers can differ, so check yours.</p>
+<div class="wn" id="warn"></div>
+<div class="row" style="margin-top:8px"><button id="add">Save trade</button><span class="m" id="msg"></span></div>
 </div>
 
-<div class="card" style="margin-top:14px"><h2>Trades</h2>
-<div class="tw"><table><thead><tr><th>Date</th><th>Pair</th><th>Side</th><th>Entry</th><th>SL</th><th>TP</th><th>Lot</th><th>News / Impact</th><th>Logic</th><th>Pips</th><th>P/L</th><th>Balance</th><th></th></tr></thead><tbody id="tb"></tbody></table></div>
+<details class="card"><summary>⚙ Calculation settings (pip size, pip value, lot rounding)</summary>
+<p class="m" style="font-size:12px">Formula: lot = (balance × risk%) ÷ (SL pips × $ per pip per 1 lot). P/L = pips × $ per pip × lot − fees. Match these values to your broker for exact results.</p>
+<div class="g">
+<div><label>Gold pip size (price move)</label><input id="gp" type="number" step="any"></div>
+<div><label>Gold $ per pip per 1 lot</label><input id="gv" type="number" step="any"></div>
+<div><label>EURUSD pip size</label><input id="ep" type="number" step="any"></div>
+<div><label>EURUSD $ per pip per 1 lot</label><input id="ev" type="number" step="any"></div>
+<div><label>Lot step</label><select id="step"><option value="0.01">0.01</option><option value="0.001">0.001</option><option value="0.1">0.1</option><option value="0">Exact (no rounding)</option></select></div>
+<div><label>Rounding</label><select id="mode"><option value="down">Down (never exceed risk)</option><option value="near">Nearest</option></select></div>
 </div>
-<div class="card" style="margin-top:14px"><h2>Backup</h2>
+<p class="m" style="font-size:12px;margin-bottom:0">Gold: standard is 1 pip = 0.10 → $10 per pip per lot (100 oz). If your broker calls 0.01 a pip, set pip size 0.01 and $ per pip 1. EURUSD: 0.0001 and $10. For a non-USD account, enter the pip value in your account currency.</p>
+</details>
+
+<div class="card"><h2>Trades</h2>
+<div class="tw"><table><thead><tr><th>Date</th><th>Pair</th><th>Side</th><th>Entry</th><th>SL</th><th>TP</th><th>Lot</th><th>News / Impact</th><th>Logic</th><th>Pips</th><th>P/L</th><th>Balance</th><th>Result (edit)</th><th></th></tr></thead><tbody id="tb"></tbody></table></div>
+</div>
+
+<div class="card"><h2>Backup</h2>
 <p class="m" style="font-size:12px;margin:0 0 10px">Your data lives on this device only. Export a backup regularly, and import it to restore or move to another device.</p>
 <div class="row"><button class="s" id="expj">Export backup (.json)</button><button class="s" id="expc">Export CSV</button><button class="s" id="impb">Import backup</button><input id="impf" type="file" accept=".json,application/json" hidden><button class="s" id="reset">Clear all</button><span class="m" id="bmsg"></span></div></div>
-<button class="s" id="inst" hidden style="margin-top:12px">📲 Install app</button>
+<button class="s" id="inst" hidden>📲 Install app</button>
 </div>
 <script>
 const $=id=>document.getElementById(id);
-const PIP={XAUUSD:.1,EURUSD:.0001},DEC={XAUUSD:2,EURUSD:5},PV=10;
-let S={start:1000,trades:[]};
-try{const r=localStorage.getItem('tj1');if(r)S=JSON.parse(r)}catch(e){}
+//<core>
+const r=(x,n=6)=>Math.round(x*Math.pow(10,n))/Math.pow(10,n);
+const PIPDEF={XAUUSD:0.1,EURUSD:0.0001};
+function calcLot(rk,slp,pv,step,mode){
+  if(!(slp>0)||!(pv>0)||!(rk>0))return{exact:null,lot:null};
+  const exact=rk/(slp*pv);let lot;
+  if(step>0){const k=exact/step;lot=r((mode==='down'?Math.floor(r(k,6)):Math.round(k))*step,4)}
+  else lot=r(exact,4);
+  return{exact,lot};
+}
+function calcResult(t,exit,manual){
+  const ps=t.ps||PIPDEF[t.pair],pv=t.pv||10,fees=t.fees||0;
+  t.exit=exit;t.plm=manual;
+  if(exit==null&&manual==null){t.pips=null;t.pl=0;t.closed=false;return t}
+  t.pips=exit!=null?r((exit-t.entry)*t.dir/ps,2):null;
+  t.pl=manual!=null?r(manual,2):r(t.pips*pv*t.lot-fees,2);
+  t.closed=true;return t;
+}
+//</core>
+const DP={XAUUSD:2,EURUSD:5};
+let S={start:1000,trades:[],cfg:{}};
+try{const x=localStorage.getItem('tj1');if(x)S=JSON.parse(x)}catch(e){}
+S.trades=S.trades||[];if(!isFinite(S.start))S.start=1000;
+S.cfg=Object.assign({XAUUSD:{pip:.1,pv:10},EURUSD:{pip:.0001,pv:10},step:.01,mode:'down'},S.cfg||{});
 const save=()=>{try{localStorage.setItem('tj1',JSON.stringify(S))}catch(e){}};
 const num=id=>{const v=parseFloat($(id).value);return isNaN(v)?null:v};
 const fmt=(v,d=2)=>v==null||!isFinite(v)?'–':(+v).toFixed(d);
 const money=v=>(v<0?'-':'')+'$'+Math.abs(v).toFixed(2);
-const esc=s=>String(s).replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+const esc=s=>String(s==null?'':s).replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
 const cls=v=>v>0?'p':v<0?'n':'';
-function balance(){return S.start+S.trades.reduce((a,t)=>a+(t.pl||0),0)}
-function pipSz(){return PIP[$('pair').value]}
-function dec(){return DEC[$('pair').value]}
-function dir(){return +$('dir').value}
+let balManual=false;
+const balance=()=>r(S.start+S.trades.reduce((a,t)=>a+(t.pl||0),0),2);
+const cfg=()=>S.cfg[$('pair').value];
+const dir=()=>+$('dir').value;
+const dpn=()=>DP[$('pair').value];
 
-function fromPips(){ // SL pips + RR -> prices
+function fromPips(){
   const e=num('entry'),sp=num('slp'),rr=num('rr');
   if(e==null||sp==null)return;
-  const d=dir(),p=pipSz();
-  $('sl').value=(e-d*sp*p).toFixed(dec());
-  if(rr!=null)$('tpp').value=(e+d*sp*p*rr).toFixed(dec());
+  const d=dir(),p=cfg().pip;
+  $('sl').value=r(e-d*sp*p,dpn()).toFixed(dpn());
+  if(rr!=null)$('tpp').value=r(e+d*sp*p*rr,dpn()).toFixed(dpn());
 }
-function fromPrices(){ // SL/TP prices -> pips and RR
-  const e=num('entry'),sl=num('sl'),tp=num('tpp');
-  if(e!=null&&sl!=null){$('slp').value=(Math.abs(e-sl)/pipSz()).toFixed(1)}
-  if(e!=null&&sl!=null&&tp!=null&&sl!==e){$('rr').value=(Math.abs(tp-e)/Math.abs(e-sl)).toFixed(2)}
+function fromPrices(){
+  const e=num('entry'),sl=num('sl'),tp=num('tpp'),p=cfg().pip;
+  if(e!=null&&sl!=null)$('slp').value=r(Math.abs(e-sl)/p,2);
+  if(e!=null&&sl!=null&&tp!=null&&sl!==e)$('rr').value=r(Math.abs(tp-e)/Math.abs(e-sl),2);
 }
 function live(){
-  const bal=balance(),risk=num('risk'),e=num('entry'),sl=num('sl'),tp=num('tpp'),p=pipSz();
-  $('bal').value=bal.toFixed(2);
-  const slp=e!=null&&sl!=null?Math.abs(e-sl)/p:null;
-  const tpp=e!=null&&tp!=null?Math.abs(tp-e)/p:null;
-  const rsk=risk!=null?bal*risk/100:null;
-  const lot=slp&&rsk!=null?Math.floor(rsk/(slp*PV)*100)/100:null;
-  $('lot').textContent=fmt(lot);$('rsk').textContent=rsk==null?'–':money(rsk);
+  const c=cfg(),bal=balManual&&num('bal')>0?num('bal'):balance();
+  if(!balManual)$('bal').value=bal;
+  const risk=num('risk'),e=num('entry'),sl=num('sl'),tp=num('tpp');
+  const slp=e!=null&&sl!=null?r(Math.abs(e-sl)/c.pip,2):null;
+  const tpp=e!=null&&tp!=null?r(Math.abs(tp-e)/c.pip,2):null;
+  const rsk=risk!=null?r(bal*risk/100,2):null;
+  const L=calcLot(rsk,slp,c.pv,+S.cfg.step,S.cfg.mode);
+  const cl=num('clot');
+  const lot=cl>0?cl:L.lot;
+  const act=lot&&slp?r(lot*slp*c.pv,2):null;
+  $('lot').textContent=lot==null?'–':fmt(lot,4).replace(/0+$/,'').replace(/\.$/,'.0').replace(/\.(\d)$/,'.$10');
+  $('ex').textContent=L.exact==null?'–':fmt(L.exact,4);
+  $('rsk').textContent=rsk==null?'–':money(rsk);
+  $('act').textContent=act==null?'–':money(act)+' ('+fmt(act/bal*100,2)+'%)';
   $('o1').textContent=fmt(slp,1);$('o2').textContent=fmt(tpp,1);
-  $('o3').textContent=lot!=null&&tpp!=null?money(lot*tpp*PV):'–';
+  $('o3').textContent=lot&&tpp!=null?money(lot*tpp*c.pv-(num('fees')||0)):'–';
   $('o4').textContent=slp&&tpp!=null?'1 : '+fmt(tpp/slp):'–';
-  return{lot,slp,tpp};
+  let w='';
+  if(slp&&L.lot===0&&!(cl>0))w='⚠ Lot rounds to 0. Smallest lot ('+S.cfg.step+') risks '+money(S.cfg.step*slp*c.pv)+' at this SL. Use a tighter SL, a bigger risk %, or change rounding.';
+  else if(act!=null&&rsk&&Math.abs(act-rsk)/rsk>0.005)w='Lot is rounded to the lot step, so actual risk differs slightly from target.';
+  $('warn').textContent=w;
+  return{lot,slp,tpp,rsk,bal};
 }
-['entry','slp','rr'].forEach(i=>$(i).addEventListener('input',()=>{fromPips();if(i==='entry')fromPrices();live()}));
-$('entry').addEventListener('input',()=>{ if(num('slp')==null)fromPrices() });
+['entry','slp','rr'].forEach(i=>$(i).addEventListener('input',()=>{fromPips();if(i==='entry'&&num('slp')==null)fromPrices();live()}));
 ['sl','tpp'].forEach(i=>$(i).addEventListener('input',()=>{fromPrices();live()}));
 ['pair','dir'].forEach(i=>$(i).addEventListener('change',()=>{if(num('slp')!=null)fromPips();else fromPrices();live()}));
-$('risk').addEventListener('input',live);
-$('pair').addEventListener('change',()=>{$('entry').step=pipSz()});
+['risk','clot','fees'].forEach(i=>$(i).addEventListener('input',live));
+$('bal').addEventListener('input',()=>{balManual=true;live()});
+$('balauto').onclick=()=>{balManual=false;live()};
 
-function result(t,exit){
-  t.exit=exit;
-  if(exit==null){t.pips=null;t.pl=0;t.closed=false;return}
-  t.pips=(exit-t.entry)*t.dir/PIP[t.pair];
-  t.pl=t.pips*PV*t.lot;t.closed=true;
-}
+// settings
+function loadCfg(){$('gp').value=S.cfg.XAUUSD.pip;$('gv').value=S.cfg.XAUUSD.pv;$('ep').value=S.cfg.EURUSD.pip;$('ev').value=S.cfg.EURUSD.pv;$('step').value=String(S.cfg.step);$('mode').value=S.cfg.mode}
+[['gp','XAUUSD','pip'],['gv','XAUUSD','pv'],['ep','EURUSD','pip'],['ev','EURUSD','pv']].forEach(([id,p,k])=>$(id).addEventListener('input',()=>{const v=parseFloat($(id).value);if(v>0){S.cfg[p][k]=v;save();if(num('slp')!=null)fromPips();live()}}));
+$('step').onchange=()=>{S.cfg.step=+$('step').value;save();live()};
+$('mode').onchange=()=>{S.cfg.mode=$('mode').value;save();live()};
+
 $('add').onclick=()=>{
-  const {lot,slp,tpp}=live(),m=$('msg');
-  const e=num('entry'),sl=num('sl');
-  if(e==null||sl==null||!lot){m.textContent='Enter entry and SL to calculate lot size.';return}
-  const t={id:Date.now(),date:$('date').value,pair:$('pair').value,dir:dir(),entry:e,sl,tp:num('tpp'),lot,risk:num('risk'),slp,tpp,
+  const q=live(),m=$('msg'),c=cfg(),e=num('entry'),sl=num('sl');
+  if(e==null||sl==null||!q.lot){m.textContent='Enter entry and SL (and risk %) to get a lot size.';return}
+  const t={id:Date.now(),date:$('date').value,pair:$('pair').value,dir:dir(),entry:e,sl,tp:num('tpp'),lot:q.lot,risk:num('risk'),
+    slp:q.slp,tpp:q.tpp,ps:c.pip,pv:c.pv,fees:num('fees')||0,bal:q.bal,
     news:$('news').value,nt:$('nt').value,imp:$('imp').value,logic:$('logic').value.trim()};
-  result(t,num('exit'));
+  calcResult(t,num('exit'),null);
   S.trades.unshift(t);save();
-  ['entry','slp','sl','tpp','exit','logic'].forEach(i=>$(i).value='');
+  ['entry','slp','sl','tpp','exit','logic','clot'].forEach(i=>$(i).value='');
   m.textContent='Saved.';render();
 };
-function closeTrade(id){
-  const v=parseFloat(document.getElementById('x'+id).value);
-  if(isNaN(v))return;
-  const t=S.trades.find(t=>t.id===id);result(t,v);save();render();
+function upd(id){
+  const t=S.trades.find(t=>t.id===id);
+  const x=parseFloat($('x'+id).value),mv=parseFloat($('m'+id).value);
+  calcResult(t,isNaN(x)?null:x,isNaN(mv)?null:mv);save();render();
 }
 function del(id){S.trades=S.trades.filter(t=>t.id!==id);save();render()}
 function render(){
   const d=S.trades.filter(t=>t.closed);
-  const net=d.reduce((a,t)=>a+t.pl,0),wins=d.filter(t=>t.pl>0).length;
+  const net=r(d.reduce((a,t)=>a+t.pl,0),2),wins=d.filter(t=>t.pl>0).length;
   $('cur').textContent=money(balance());
   $('net').textContent=money(net);$('net').className=cls(net);
   $('wr').textContent=d.length?Math.round(wins/d.length*100)+'% ('+wins+'/'+d.length+')':'–';
-  const tp=d.reduce((a,t)=>a+t.pips,0);
+  const tp=r(d.reduce((a,t)=>a+(t.pips||0),0),2);
   $('tp').textContent=d.length?fmt(tp,1):'–';$('tp').className=cls(tp);
-  // running balance per trade (oldest first)
   let run=S.start;const rb={};
-  [...S.trades].reverse().forEach(t=>{run+=t.pl||0;rb[t.id]=run});
+  [...S.trades].reverse().forEach(t=>{run=r(run+(t.pl||0),2);rb[t.id]=run});
   $('tb').innerHTML=S.trades.length?S.trades.map(t=>{
-    const dp=DEC[t.pair];
-    return `<tr><td>${esc(t.date||'')}</td><td>${t.pair}</td><td>${t.dir>0?'Buy':'Sell'}</td>
+    const dp=DP[t.pair];
+    return `<tr><td>${esc(t.date)}</td><td>${t.pair}</td><td>${t.dir>0?'Buy':'Sell'}</td>
 <td>${fmt(t.entry,dp)}</td><td>${fmt(t.sl,dp)}<div class="m">${fmt(t.slp,1)} pips</div></td><td>${t.tp!=null?fmt(t.tp,dp):'–'}<div class="m">${fmt(t.tpp,1)} pips</div></td>
-<td>${fmt(t.lot)}</td><td>${t.news==='Yes'?esc(t.nt||'')+' · '+t.imp:'No news'}</td><td class="l">${esc(t.logic)}</td>
-<td class="${cls(t.pips)}">${t.closed?fmt(t.pips,1):'<input id="x'+t.id+'" type="number" step="any" placeholder="exit price">'}</td>
-<td class="${cls(t.pl)}">${t.closed?money(t.pl):'<button class="s" onclick="closeTrade('+t.id+')">Close</button>'}</td>
+<td>${r(t.lot,4)}</td><td>${t.news==='Yes'?esc(t.nt)+' · '+t.imp:'No news'}</td><td class="l">${esc(t.logic)}</td>
+<td class="${cls(t.pips)}">${t.pips!=null?fmt(t.pips,1):'–'}</td>
+<td class="${cls(t.pl)}">${t.closed?money(t.pl):'<span class="m">open</span>'}${t.fees?'<div class="m">fees '+money(t.fees)+'</div>':''}</td>
 <td>${t.closed?money(rb[t.id]):'<span class="m">open</span>'}</td>
+<td><input id="x${t.id}" type="number" step="any" placeholder="exit price" value="${t.exit==null?'':t.exit}"><input id="m${t.id}" type="number" step="any" placeholder="actual P/L $" value="${t.plm==null?'':t.plm}"><button class="s" onclick="upd(${t.id})">Update</button></td>
 <td><button class="s" onclick="del(${t.id})">✕</button></td></tr>`}).join('')
-   :'<tr><td colspan="13" class="m">No trades yet.</td></tr>';
+   :'<tr><td colspan="14" class="m">No trades yet.</td></tr>';
   live();
 }
 $('start').value=S.start;
 $('start').addEventListener('input',()=>{const v=parseFloat($('start').value);if(!isNaN(v)){S.start=v;save();render()}});
 $('reset').onclick=()=>{if($('reset').dataset.c){S.trades=[];save();render();$('reset').textContent='Clear all';delete $('reset').dataset.c}else{$('reset').dataset.c=1;$('reset').textContent='Click again to confirm'}};
-$('date').value=new Date().toISOString().slice(0,10);
+
 function dl(name,text,type){const a=document.createElement('a');a.href=URL.createObjectURL(new Blob([text],{type}));a.download=name;document.body.appendChild(a);a.click();a.remove();setTimeout(()=>URL.revokeObjectURL(a.href),1000)}
 const stamp=()=>new Date().toISOString().slice(0,10);
 $('expj').onclick=()=>{dl('trading-journal-'+stamp()+'.json',JSON.stringify(S,null,1),'application/json');$('bmsg').textContent='Backup downloaded.'};
 $('expc').onclick=()=>{
   const q=v=>'"'+String(v==null?'':v).replace(/"/g,'""')+'"';
-  const hd=['Date','Pair','Side','Entry','SL','TP','Lot','Risk %','SL pips','TP pips','News','News time','Impact','Logic','Exit','Pips','P/L'];
-  const rows=S.trades.map(t=>[t.date,t.pair,t.dir>0?'Buy':'Sell',t.entry,t.sl,t.tp,t.lot,t.risk,t.slp,t.tpp,t.news,t.nt,t.imp,t.logic,t.exit,t.pips,t.pl].map(q).join(','));
+  const hd=['Date','Pair','Side','Entry','SL','TP','Lot','Risk %','SL pips','TP pips','Fees','News','News time','Impact','Logic','Exit','Pips','P/L'];
+  const rows=S.trades.map(t=>[t.date,t.pair,t.dir>0?'Buy':'Sell',t.entry,t.sl,t.tp,t.lot,t.risk,t.slp,t.tpp,t.fees,t.news,t.nt,t.imp,t.logic,t.exit,t.pips,t.pl].map(q).join(','));
   dl('trading-journal-'+stamp()+'.csv',[hd.map(q).join(',')].concat(rows).join('\n'),'text/csv');$('bmsg').textContent='CSV downloaded.'};
 $('impb').onclick=()=>$('impf').click();
-$('impf').onchange=e=>{const f=e.target.files[0];if(!f)return;const r=new FileReader();
-  r.onload=()=>{try{const d=JSON.parse(r.result);if(!d||!Array.isArray(d.trades))throw 0;
-    S={start:+d.start||0,trades:d.trades};save();$('start').value=S.start;render();$('bmsg').textContent='Imported '+S.trades.length+' trades.'}
-  catch(x){$('bmsg').textContent='Not a valid backup file.'}};r.readAsText(f);e.target.value=''};
+$('impf').onchange=e=>{const f=e.target.files[0];if(!f)return;const rd=new FileReader();
+  rd.onload=()=>{try{const d=JSON.parse(rd.result);if(!d||!Array.isArray(d.trades))throw 0;
+    S={start:+d.start||0,trades:d.trades,cfg:Object.assign(S.cfg,d.cfg||{})};save();$('start').value=S.start;loadCfg();render();$('bmsg').textContent='Imported '+S.trades.length+' trades.'}
+  catch(x){$('bmsg').textContent='Not a valid backup file.'}};rd.readAsText(f);e.target.value=''};
 let dp=null;
 window.addEventListener('beforeinstallprompt',e=>{e.preventDefault();dp=e;$('inst').hidden=false});
 $('inst').onclick=async()=>{if(!dp)return;dp.prompt();await dp.userChoice;dp=null;$('inst').hidden=true};
 if('serviceWorker' in navigator)window.addEventListener('load',()=>navigator.serviceWorker.register('sw.js').catch(()=>{}));
-render();
+$('date').value=new Date().toISOString().slice(0,10);
+loadCfg();render();
+</script></body></html>
+
 </script></body></html>
