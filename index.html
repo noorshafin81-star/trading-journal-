@@ -1,0 +1,202 @@
+<!DOCTYPE html>
+<html lang="en"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Trading Journal</title>
+<link rel="manifest" href="manifest.json">
+<meta name="theme-color" content="#121826">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-title" content="Journal">
+<link rel="apple-touch-icon" href="icons/apple-touch-icon.png">
+<link rel="icon" href="icons/icon-192.png">
+<style>
+:root{--bg:#f6f7f9;--card:#fff;--tx:#14181f;--mut:#6b7280;--bd:#e3e6ec;--ac:#1f6feb;--g:#0e9f6e;--r:#e02f44;--in:#f1f3f7;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--bg:#0e1116;--card:#171b22;--tx:#e8ebf0;--mut:#8b94a3;--bd:#262c36;--ac:#4c8dff;--g:#2dd4a0;--r:#ff5c70;--in:#1f242d;color-scheme:dark}}
+:root[data-theme="dark"]{--bg:#0e1116;--card:#171b22;--tx:#e8ebf0;--mut:#8b94a3;--bd:#262c36;--ac:#4c8dff;--g:#2dd4a0;--r:#ff5c70;--in:#1f242d;color-scheme:dark}
+html{scroll-padding-top:env(safe-area-inset-top,0px)}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--tx);font:15px/1.4 system-ui,-apple-system,"Segoe UI",Roboto,sans-serif}
+.w{max-width:1100px;margin:0 auto;padding:16px}
+h1{font-size:22px;margin:0 0 14px}h2{font-size:16px;margin:0 0 12px}
+.stats{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:10px;margin-bottom:14px}
+.card{background:var(--card);border:1px solid var(--bd);border-radius:12px;padding:14px}
+.st small{color:var(--mut);display:block;font-size:12px}.st b{font-size:20px}
+.g{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:10px}
+label{font-size:12px;color:var(--mut);display:block;margin-bottom:3px}
+input,select,textarea{width:100%;padding:9px;border:1px solid var(--bd);border-radius:8px;background:var(--in);color:var(--tx);font:inherit}
+textarea{resize:vertical;min-height:60px}
+.res{display:grid;grid-template-columns:repeat(auto-fit,minmax(130px,1fr));gap:10px;margin:14px 0;padding:12px;border-radius:10px;background:var(--in)}
+.res small{color:var(--mut);display:block;font-size:12px}.res b{font-size:18px}
+button{padding:10px 16px;border:0;border-radius:8px;background:var(--ac);color:#fff;font:inherit;font-weight:600;cursor:pointer}
+button.s{background:var(--in);color:var(--tx);border:1px solid var(--bd);padding:5px 9px;font-size:13px}
+.tw{overflow-x:auto}table{border-collapse:collapse;width:100%;min-width:900px;font-size:13px}
+th,td{padding:8px;border-bottom:1px solid var(--bd);text-align:left;white-space:nowrap;vertical-align:top}th{color:var(--mut);font-weight:600}
+td.l{white-space:normal;min-width:160px}
+.p{color:var(--g)}.n{color:var(--r)}.m{color:var(--mut)}
+.row{display:flex;gap:10px;align-items:center;flex-wrap:wrap}
+td input{width:90px;padding:5px}
+</style></head><body><div class="w">
+<h1>📒 Trading Journal</h1>
+<div class="stats">
+<div class="card st"><small>Starting balance ($)</small><input id="start" type="number" step="any"></div>
+<div class="card st"><small>Current balance</small><b id="cur">–</b></div>
+<div class="card st"><small>Net P/L</small><b id="net">–</b></div>
+<div class="card st"><small>Win rate</small><b id="wr">–</b></div>
+<div class="card st"><small>Total pips</small><b id="tp">–</b></div>
+</div>
+
+<div class="card"><h2>New trade</h2>
+<div class="g">
+<div><label>Date</label><input id="date" type="date"></div>
+<div><label>Pair</label><select id="pair"><option>XAUUSD</option><option>EURUSD</option></select></div>
+<div><label>Direction</label><select id="dir"><option value="1">Buy</option><option value="-1">Sell</option></select></div>
+<div><label>Current balance ($)</label><input id="bal" type="number" readonly></div>
+<div><label>Risk %</label><input id="risk" type="number" step="0.1" value="1"></div>
+<div><label>Entry price</label><input id="entry" type="number" step="any"></div>
+<div><label>SL pips (auto)</label><input id="slp" type="number" step="any"></div>
+<div><label>Risk : Reward (1 : x)</label><input id="rr" type="number" step="0.1" value="2"></div>
+<div><label>SL price</label><input id="sl" type="number" step="any"></div>
+<div><label>TP price</label><input id="tpp" type="number" step="any"></div>
+<div><label>News day?</label><select id="news"><option>No</option><option>Yes</option></select></div>
+<div><label>News time (local)</label><input id="nt" type="time"></div>
+<div><label>Impact</label><select id="imp"><option>None</option><option>Low</option><option>Medium</option><option>High</option></select></div>
+<div><label>Exit price (when closed)</label><input id="exit" type="number" step="any"></div>
+</div>
+<div style="margin-top:10px"><label>Trade logic</label><textarea id="logic" placeholder="Why are you taking this trade?"></textarea></div>
+<div class="res">
+<div><small>Lot size</small><b id="lot">–</b></div>
+<div><small>Risk ($)</small><b id="rsk">–</b></div>
+<div><small>SL pips</small><b id="o1">–</b></div>
+<div><small>TP pips</small><b id="o2">–</b></div>
+<div><small>Reward ($)</small><b id="o3">–</b></div>
+<div><small>R:R</small><b id="o4">–</b></div>
+</div>
+<div class="row"><button id="add">Save trade</button><span class="m" id="msg"></span></div>
+<p class="m" style="font-size:12px;margin:10px 0 0">Assumes a USD account, standard lot = 100,000 units (EURUSD) / 100 oz (gold). Pip = 0.0001 for EURUSD and 0.10 for gold, so both are worth $10 per pip per lot. Brokers can differ, so check yours.</p>
+</div>
+
+<div class="card" style="margin-top:14px"><h2>Trades</h2>
+<div class="tw"><table><thead><tr><th>Date</th><th>Pair</th><th>Side</th><th>Entry</th><th>SL</th><th>TP</th><th>Lot</th><th>News / Impact</th><th>Logic</th><th>Pips</th><th>P/L</th><th>Balance</th><th></th></tr></thead><tbody id="tb"></tbody></table></div>
+</div>
+<div class="card" style="margin-top:14px"><h2>Backup</h2>
+<p class="m" style="font-size:12px;margin:0 0 10px">Your data lives on this device only. Export a backup regularly, and import it to restore or move to another device.</p>
+<div class="row"><button class="s" id="expj">Export backup (.json)</button><button class="s" id="expc">Export CSV</button><button class="s" id="impb">Import backup</button><input id="impf" type="file" accept=".json,application/json" hidden><button class="s" id="reset">Clear all</button><span class="m" id="bmsg"></span></div></div>
+<button class="s" id="inst" hidden style="margin-top:12px">📲 Install app</button>
+</div>
+<script>
+const $=id=>document.getElementById(id);
+const PIP={XAUUSD:.1,EURUSD:.0001},DEC={XAUUSD:2,EURUSD:5},PV=10;
+let S={start:1000,trades:[]};
+try{const r=localStorage.getItem('tj1');if(r)S=JSON.parse(r)}catch(e){}
+const save=()=>{try{localStorage.setItem('tj1',JSON.stringify(S))}catch(e){}};
+const num=id=>{const v=parseFloat($(id).value);return isNaN(v)?null:v};
+const fmt=(v,d=2)=>v==null||!isFinite(v)?'–':(+v).toFixed(d);
+const money=v=>(v<0?'-':'')+'$'+Math.abs(v).toFixed(2);
+const esc=s=>String(s).replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+const cls=v=>v>0?'p':v<0?'n':'';
+function balance(){return S.start+S.trades.reduce((a,t)=>a+(t.pl||0),0)}
+function pipSz(){return PIP[$('pair').value]}
+function dec(){return DEC[$('pair').value]}
+function dir(){return +$('dir').value}
+
+function fromPips(){ // SL pips + RR -> prices
+  const e=num('entry'),sp=num('slp'),rr=num('rr');
+  if(e==null||sp==null)return;
+  const d=dir(),p=pipSz();
+  $('sl').value=(e-d*sp*p).toFixed(dec());
+  if(rr!=null)$('tpp').value=(e+d*sp*p*rr).toFixed(dec());
+}
+function fromPrices(){ // SL/TP prices -> pips and RR
+  const e=num('entry'),sl=num('sl'),tp=num('tpp');
+  if(e!=null&&sl!=null){$('slp').value=(Math.abs(e-sl)/pipSz()).toFixed(1)}
+  if(e!=null&&sl!=null&&tp!=null&&sl!==e){$('rr').value=(Math.abs(tp-e)/Math.abs(e-sl)).toFixed(2)}
+}
+function live(){
+  const bal=balance(),risk=num('risk'),e=num('entry'),sl=num('sl'),tp=num('tpp'),p=pipSz();
+  $('bal').value=bal.toFixed(2);
+  const slp=e!=null&&sl!=null?Math.abs(e-sl)/p:null;
+  const tpp=e!=null&&tp!=null?Math.abs(tp-e)/p:null;
+  const rsk=risk!=null?bal*risk/100:null;
+  const lot=slp&&rsk!=null?Math.floor(rsk/(slp*PV)*100)/100:null;
+  $('lot').textContent=fmt(lot);$('rsk').textContent=rsk==null?'–':money(rsk);
+  $('o1').textContent=fmt(slp,1);$('o2').textContent=fmt(tpp,1);
+  $('o3').textContent=lot!=null&&tpp!=null?money(lot*tpp*PV):'–';
+  $('o4').textContent=slp&&tpp!=null?'1 : '+fmt(tpp/slp):'–';
+  return{lot,slp,tpp};
+}
+['entry','slp','rr'].forEach(i=>$(i).addEventListener('input',()=>{fromPips();if(i==='entry')fromPrices();live()}));
+$('entry').addEventListener('input',()=>{ if(num('slp')==null)fromPrices() });
+['sl','tpp'].forEach(i=>$(i).addEventListener('input',()=>{fromPrices();live()}));
+['pair','dir'].forEach(i=>$(i).addEventListener('change',()=>{if(num('slp')!=null)fromPips();else fromPrices();live()}));
+$('risk').addEventListener('input',live);
+$('pair').addEventListener('change',()=>{$('entry').step=pipSz()});
+
+function result(t,exit){
+  t.exit=exit;
+  if(exit==null){t.pips=null;t.pl=0;t.closed=false;return}
+  t.pips=(exit-t.entry)*t.dir/PIP[t.pair];
+  t.pl=t.pips*PV*t.lot;t.closed=true;
+}
+$('add').onclick=()=>{
+  const {lot,slp,tpp}=live(),m=$('msg');
+  const e=num('entry'),sl=num('sl');
+  if(e==null||sl==null||!lot){m.textContent='Enter entry and SL to calculate lot size.';return}
+  const t={id:Date.now(),date:$('date').value,pair:$('pair').value,dir:dir(),entry:e,sl,tp:num('tpp'),lot,risk:num('risk'),slp,tpp,
+    news:$('news').value,nt:$('nt').value,imp:$('imp').value,logic:$('logic').value.trim()};
+  result(t,num('exit'));
+  S.trades.unshift(t);save();
+  ['entry','slp','sl','tpp','exit','logic'].forEach(i=>$(i).value='');
+  m.textContent='Saved.';render();
+};
+function closeTrade(id){
+  const v=parseFloat(document.getElementById('x'+id).value);
+  if(isNaN(v))return;
+  const t=S.trades.find(t=>t.id===id);result(t,v);save();render();
+}
+function del(id){S.trades=S.trades.filter(t=>t.id!==id);save();render()}
+function render(){
+  const d=S.trades.filter(t=>t.closed);
+  const net=d.reduce((a,t)=>a+t.pl,0),wins=d.filter(t=>t.pl>0).length;
+  $('cur').textContent=money(balance());
+  $('net').textContent=money(net);$('net').className=cls(net);
+  $('wr').textContent=d.length?Math.round(wins/d.length*100)+'% ('+wins+'/'+d.length+')':'–';
+  const tp=d.reduce((a,t)=>a+t.pips,0);
+  $('tp').textContent=d.length?fmt(tp,1):'–';$('tp').className=cls(tp);
+  // running balance per trade (oldest first)
+  let run=S.start;const rb={};
+  [...S.trades].reverse().forEach(t=>{run+=t.pl||0;rb[t.id]=run});
+  $('tb').innerHTML=S.trades.length?S.trades.map(t=>{
+    const dp=DEC[t.pair];
+    return `<tr><td>${esc(t.date||'')}</td><td>${t.pair}</td><td>${t.dir>0?'Buy':'Sell'}</td>
+<td>${fmt(t.entry,dp)}</td><td>${fmt(t.sl,dp)}<div class="m">${fmt(t.slp,1)} pips</div></td><td>${t.tp!=null?fmt(t.tp,dp):'–'}<div class="m">${fmt(t.tpp,1)} pips</div></td>
+<td>${fmt(t.lot)}</td><td>${t.news==='Yes'?esc(t.nt||'')+' · '+t.imp:'No news'}</td><td class="l">${esc(t.logic)}</td>
+<td class="${cls(t.pips)}">${t.closed?fmt(t.pips,1):'<input id="x'+t.id+'" type="number" step="any" placeholder="exit price">'}</td>
+<td class="${cls(t.pl)}">${t.closed?money(t.pl):'<button class="s" onclick="closeTrade('+t.id+')">Close</button>'}</td>
+<td>${t.closed?money(rb[t.id]):'<span class="m">open</span>'}</td>
+<td><button class="s" onclick="del(${t.id})">✕</button></td></tr>`}).join('')
+   :'<tr><td colspan="13" class="m">No trades yet.</td></tr>';
+  live();
+}
+$('start').value=S.start;
+$('start').addEventListener('input',()=>{const v=parseFloat($('start').value);if(!isNaN(v)){S.start=v;save();render()}});
+$('reset').onclick=()=>{if($('reset').dataset.c){S.trades=[];save();render();$('reset').textContent='Clear all';delete $('reset').dataset.c}else{$('reset').dataset.c=1;$('reset').textContent='Click again to confirm'}};
+$('date').value=new Date().toISOString().slice(0,10);
+function dl(name,text,type){const a=document.createElement('a');a.href=URL.createObjectURL(new Blob([text],{type}));a.download=name;document.body.appendChild(a);a.click();a.remove();setTimeout(()=>URL.revokeObjectURL(a.href),1000)}
+const stamp=()=>new Date().toISOString().slice(0,10);
+$('expj').onclick=()=>{dl('trading-journal-'+stamp()+'.json',JSON.stringify(S,null,1),'application/json');$('bmsg').textContent='Backup downloaded.'};
+$('expc').onclick=()=>{
+  const q=v=>'"'+String(v==null?'':v).replace(/"/g,'""')+'"';
+  const hd=['Date','Pair','Side','Entry','SL','TP','Lot','Risk %','SL pips','TP pips','News','News time','Impact','Logic','Exit','Pips','P/L'];
+  const rows=S.trades.map(t=>[t.date,t.pair,t.dir>0?'Buy':'Sell',t.entry,t.sl,t.tp,t.lot,t.risk,t.slp,t.tpp,t.news,t.nt,t.imp,t.logic,t.exit,t.pips,t.pl].map(q).join(','));
+  dl('trading-journal-'+stamp()+'.csv',[hd.map(q).join(',')].concat(rows).join('\n'),'text/csv');$('bmsg').textContent='CSV downloaded.'};
+$('impb').onclick=()=>$('impf').click();
+$('impf').onchange=e=>{const f=e.target.files[0];if(!f)return;const r=new FileReader();
+  r.onload=()=>{try{const d=JSON.parse(r.result);if(!d||!Array.isArray(d.trades))throw 0;
+    S={start:+d.start||0,trades:d.trades};save();$('start').value=S.start;render();$('bmsg').textContent='Imported '+S.trades.length+' trades.'}
+  catch(x){$('bmsg').textContent='Not a valid backup file.'}};r.readAsText(f);e.target.value=''};
+let dp=null;
+window.addEventListener('beforeinstallprompt',e=>{e.preventDefault();dp=e;$('inst').hidden=false});
+$('inst').onclick=async()=>{if(!dp)return;dp.prompt();await dp.userChoice;dp=null;$('inst').hidden=true};
+if('serviceWorker' in navigator)window.addEventListener('load',()=>navigator.serviceWorker.register('sw.js').catch(()=>{}));
+render();
+</script></body></html>
